@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interpreter - High performance live compiler and interpreter for Python, Java, C++, C, HTML, CSS, JavaScript in your browser.">
+    <meta name="theme-color" content="#0a0e17">
+    <title>Interpreter - Live Multi-Language Code Compiler & IDE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+</head>
+<body>
+    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+    
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="nav-brand" aria-label="Interpreter Home">
+            <img src="assets/logo.svg" alt="Interpreter Logo" class="brand-logo-img">
+            <span class="logo-text">Interpreter</span>
+        </a>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark / light theme" type="button" title="Toggle Theme">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+            <a href="editor.html" class="btn btn-primary" id="navEditorBtn">
+                <span>Launch IDE</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Landing Section -->
+    <main class="landing-page" id="landingPage">
+        <!-- Hero Section -->
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                <span>WebAssembly & Live Compilation</span>
+            </div>
+
+            <div class="typing-container">
+                <h1 id="hero-title" class="hero-title">
+                    <span class="static-text">Interpreter</span>
+                    <span class="typing-text" id="typingText" aria-live="polite"></span>
+                    <span class="cursor" aria-hidden="true"></span>
+                </h1>
+            </div>
+
+            <p class="hero-subtitle">
+                Write, compile, and run code instantly in your browser. Live execution for <strong>Python, Java, C++, C</strong>, and <strong>HTML/CSS/JS</strong> in a unified side-by-side IDE.
+            </p>
+
+            <div class="hero-actions">
+                <a href="editor.html" class="btn btn-primary" id="startCodingBtn">
+                    <span>Open Live Editor</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#languagesSection" class="btn btn-secondary" id="exploreLangBtn">
+                    <span>Explore Languages</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Supported Languages Grid -->
+        <section class="languages-section" id="languagesSection" aria-labelledby="languages-title">
+            <header class="section-header">
+                <h2 id="languages-title" class="section-title">Supported Environments</h2>
+                <p class="section-subtitle">Select a programming language below to jump straight into the live interactive IDE.</p>
+            </header>
+
+            <div class="languages-grid" id="languagesGrid" role="list">
+                <!-- Dynamically rendered via app.js with rich cards and fallback -->
+            </div>
+        </section>
+
+        <!-- Features Showcase -->
+        <section class="features-section" aria-labelledby="features-title">
+            <header class="section-header">
+                <h2 id="features-title" class="section-title">Why Developers Love Interpreter</h2>
+                <p class="section-subtitle">Engineered for seamless productivity, zero configuration, and high speed.</p>
+            </header>
+
+            <div class="features-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Live Split-Pane Execution</h3>
+                    <p class="feature-desc">Edit on the left, watch stdout, stderr, and live preview stream seamlessly on the right with resizable gutters.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <path d="M8 21h8M12 17v4"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">HTML/CSS/JS Sandbox</h3>
+                    <p class="feature-desc">Instant real-time rendering iframe with console interceptor, DOM inspection, and responsive device testing.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Python WebAssembly Engine</h3>
+                    <p class="feature-desc">Full Python 3 runtime directly inside the browser using Pyodide WASM with offline capabilities.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">C, C++ & Java Compilers</h3>
+                    <p class="feature-desc">Standard I/O support, compiler diagnostics, GCC 10.2 / OpenJDK runtimes, and millisecond execution metrics.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer" role="contentinfo">
+            <p>
+                Built with modern WebAssembly & Web standards. 
+                <a href="editor.html" class="footer-link">Open Live Workspace &rarr;</a>
+            </p>
+        </footer>
+    </main>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

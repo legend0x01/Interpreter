@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interpreter IDE - Live side-by-side code editor and compiler for Python, Java, C++, C, and HTML/CSS/JS.">
+    <title>Editor - Interpreter Live Compiler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="editor.css">
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+    <!-- Monaco Editor AMD Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+</head>
+<body>
+    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+    <!-- IDE Header Bar -->
+    <header class="editor-header" role="banner">
+        <div class="header-left">
+            <a href="index.html" class="header-brand" aria-label="Back to home">
+                <img src="assets/logo.svg" alt="Logo" width="22" height="22" style="border-radius: 4px;">
+                <span>Interpreter</span>
+            </a>
+
+            <!-- Language Switcher Bar -->
+            <div class="language-selector" id="languageSelector" role="group" aria-label="Select programming language">
+                <button class="lang-btn active" data-lang="python" type="button" title="Python 3 (WASM)">
+                    <img src="assets/python.svg" alt="" class="lang-icon" aria-hidden="true">
+                    <span>Python</span>
+                </button>
+                <button class="lang-btn" data-lang="html" type="button" title="HTML / CSS / JS Live Preview">
+                    <img src="assets/html.svg" alt="" class="lang-icon" aria-hidden="true">
+                    <span>HTML/CSS/JS</span>
+                </button>
+                <button class="lang-btn" data-lang="cpp" type="button" title="C++ (GCC/C++20)">
+                    <img src="assets/cpp.svg" alt="" class="lang-icon" aria-hidden="true">
+                    <span>C++</span>
+                </button>
+                <button class="lang-btn" data-lang="c" type="button" title="C (GCC/C11)">
+                    <img src="assets/c.svg" alt="" class="lang-icon" aria-hidden="true">
+                    <span>C</span>
+                </button>
+                <button class="lang-btn" data-lang="java" type="button" title="Java (OpenJDK)">
+                    <img src="assets/java.svg" alt="" class="lang-icon" aria-hidden="true">
+                    <span>Java</span>
+                </button>
+                <button class="lang-btn" data-lang="javascript" type="button" title="JavaScript (V8/Node)">
+                    <img src="assets/javascript.svg" alt="" class="lang-icon" aria-hidden="true">
+                    <span>JavaScript</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- File Tabs Center -->
+        <div class="header-center">
+            <div class="file-tabs" id="fileTabs" role="tablist" aria-label="Open File Tabs">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Actions Right -->
+        <div class="header-right">
+            <div class="header-actions">
+                <button class="icon-btn" id="themeToggle" aria-label="Toggle dark/light theme" type="button" title="Toggle Theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+
+                <button class="btn btn-primary" id="runBtn" type="button" title="Run Code (Ctrl + Enter)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    <span>Run</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side-by-Side Split IDE Workspace -->
+    <main class="editor-main" id="editorMain" role="main">
+        <!-- Left: Code Editor Pane -->
+        <section class="editor-pane" id="editorPane" aria-label="Code Editor">
+            <div class="pane-header">
+                <div class="pane-title-group">
+                    <span class="pane-title" id="currentFileName">main.py</span>
+                </div>
+                <div class="pane-actions">
+                    <select class="font-size-select" id="fontSizeSelect" aria-label="Font Size">
+                        <option value="12">12px</option>
+                        <option value="13">13px</option>
+                        <option value="14" selected>14px</option>
+                        <option value="16">16px</option>
+                        <option value="18">18px</option>
+                        <option value="20">20px</option>
+                    </select>
+
+                    <button class="icon-btn" id="formatBtn" aria-label="Format Code" type="button" title="Format Code (Shift+Alt+F)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M21 10H3M21 6H3M21 14H3M21 18H3"/>
+                        </svg>
+                    </button>
+
+                    <button class="icon-btn" id="copyCodeBtn" aria-label="Copy Code" type="button" title="Copy Code to Clipboard">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                    </button>
+
+                    <button class="icon-btn" id="resetBtn" aria-label="Reset to Default Template" type="button" title="Reset Code">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Monaco Editor Mount Target -->
+            <div class="editor-container" id="editorContainer"></div>
+
+            <div class="editor-statusbar">
+                <div class="status-left">
+                    <span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
+                    <span class="status-item" id="fileEncoding">UTF-8</span>
+                </div>
+                <div class="status-right">
+                    <span class="status-item" id="languageMode">Python</span>
+                    <span class="status-item" id="indentStyle">Spaces: 4</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Draggable Resizer Gutter -->
+        <div class="resize-handle" id="resizeHandle" role="separator" aria-label="Resize panels" tabindex="0"></div>
+
+        <!-- Right: Results & Console / Preview Pane -->
+        <section class="output-pane" id="outputPane" aria-label="Output and Preview">
+            <div class="pane-header">
+                <div class="pane-title-group">
+                    <div class="output-nav-tabs" role="tablist">
+                        <button class="output-nav-btn active" id="tabConsoleBtn" type="button" role="tab" aria-selected="true">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 17 10 11 4 5"/>
+                                <line x1="12" y1="19" x2="20" y2="19"/>
+                            </svg>
+                            <span>Console Output</span>
+                        </button>
+                        <button class="output-nav-btn" id="tabPreviewBtn" type="button" role="tab" aria-selected="false">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            <span>Live Web Preview</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pane-actions">
+                    <button class="icon-btn" id="clearOutputBtn" aria-label="Clear Output" type="button" title="Clear Console (Ctrl+K)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" id="copyOutputBtn" aria-label="Copy Output" type="button" title="Copy Output">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Viewport Containers -->
+            <div class="output-container" id="outputContainer">
+                <!-- Empty Placeholder -->
+                <div class="output-placeholder" id="outputPlaceholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    <p>Run your code to see live output here</p>
+                    <span class="placeholder-hint">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to compile & execute</span>
+                </div>
+
+                <!-- Terminal Log View -->
+                <div class="output-terminal" id="outputTerminal" aria-live="polite" hidden></div>
+
+                <!-- Interactive Live Web Preview -->
+                <div class="preview-container" id="previewContainer">
+                    <div class="preview-toolbar">
+                        <div class="preview-url-bar">
+                            <span class="dot"></span>
+                            <span>interpreter://sandbox/live</span>
+                        </div>
+                        <button class="icon-btn" id="refreshPreviewBtn" style="width: 28px; height: 28px;" title="Reload Sandbox" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                <path d="M23 4v6h-6M1 20v-6h6"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <iframe class="preview-iframe" id="previewIframe" sandbox="allow-scripts allow-modals" title="Live Preview Frame"></iframe>
+                </div>
+
+                <!-- Standard Input Bar (for input(), scanf(), cin, Scanner) -->
+                <div class="stdin-container" id="stdinContainer">
+                    <span class="stdin-prompt">&gt;</span>
+                    <input type="text" class="stdin-input" id="stdinInput" placeholder="Standard Input (stdin for interactive prompts)..." aria-label="Standard Input">
+                    <button type="button" class="stdin-send-btn" id="stdinSendBtn">Send Stdin</button>
+                </div>
+            </div>
+
+            <!-- Output Status Bar -->
+            <div class="output-statusbar">
+                <div class="status-left">
+                    <span class="status-item">Time: <strong id="executionTime">—</strong></span>
+                    <span class="status-item">Engine: <strong id="engineName">Pyodide WASM</strong></span>
+                </div>
+                <div class="status-right">
+                    <span class="status-item">
+                        <span class="status-indicator" id="statusIndicator"></span>
+                        <span id="statusText">Ready</span>
+                    </span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification Overlay -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <script type="module" src="editor.js"></script>
+</body>
+</html>
